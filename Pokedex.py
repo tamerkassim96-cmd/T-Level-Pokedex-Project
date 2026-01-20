@@ -1,7 +1,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import customtkinter
+
+customtkinter.set_appearance_mode("system")
+
 
 df = pd.read_csv("pokemon_data.csv")
+
 
 df.info()
 
@@ -11,18 +16,18 @@ df["Name"].value_counts().plot(kind="bar")
 plt.title("Pokemon Type")
 plt.show()
 
-# pokemon = {
-# "Name": 'Pikachu',
-# "Type": 'Electric',
-# "Generation": 'Gen 1',
-# "Moveset": 'Electrocute, Zap',
-# "Special":'Evolution'
-# }
-#
-# df = pd.DataFrame([pokemon], index=["Type Distribution"])
-#
-# print(df.loc['Type Distribution'])
+pokemon = {
+"Name": 'Pikachu',
+"Type": 'Electric',
+"Generation": 'Gen 1',
+"Moveset": 'Electrocute, Zap',
+"Special":'Evolution'
+}
 
-# df["Name"].value_counts().plot(kind="bar")
-# plt.title("Pokemon Distribution")
-# plt.show()
+df = pd.DataFrame([pokemon], index=["Type Distribution"])
+
+print(df.loc['Type Distribution'])
+
+df["Name"].value_counts().plot(kind="bar")
+plt.title("Pokemon Distribution")
+plt.show()
