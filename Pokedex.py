@@ -31,9 +31,15 @@ class App(ctk.CTk):
         self.my_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
         fig = Figure(figsize=(5, 5))
-        canvas = FigureCanvasTkAgg(fig, master=self)
-        canvas.get_tk_widget()
+        ax = fig.add_subplot(111)
+        df["Type 1"].value_counts().plot(kind="bar", ax=ax)
+        ax.set_title("Pokemon Type")
+        ax.set_xlabel("Pokemon Type")
+        ax.set_ylabel("Number of Pokemon")
+
+        canvas = FigureCanvasTkAgg(fig, master=self.my_frame)
         canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True)
 
 app = App()
 app.mainloop()
