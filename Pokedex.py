@@ -1,52 +1,41 @@
 from tkinter import Frame
 
+import matplotlib
 import pandas as pd
 import matplotlib.pyplot as plt
+matplotlib.use("TkAgg")
 import customtkinter as ctk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 ctk.set_appearance_mode("system")
 
-root = ctk.CTk()
-
-frame = ctk.CTkFrame(master=root, width=200, height=200)
-
 df = pd.read_csv("pokemon_data.csv")
-
-df.info()
-
 print("Amount of pokemon is:", len(df))
 
-df["Name"].value_counts().plot(kind="bar")
+
+df["Type 1"].value_counts().plot(kind="bar")
 plt.title("Pokemon Type")
+plt.xlabel("Pokemon Type")
+plt.ylabel("Number of Pokemon")
 plt.show()
 
-pokemon = {
-    "Name": 'Pikachu',
-    "Type": 'Electric',
-    "Generation": 'Gen 1',
-    "Moveset": 'Electrocute, Zap',
-    "Special": 'Evolution'
-}
+print(df.columns)
 
-df = pd.DataFrame([pokemon], index=["Type Distribution"])
-
-print(df.loc['Type Distribution'])
-
-df["Name"].value_counts().plot(kind="bar")
-plt.title("Pokemon Distribution")
-plt.show()
-
-
-class App():
+class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry("400x200")
-        self.grid_rowconfigure(0, weight=1)  # configure grid system
-        self.grid_columnconfigure(0, weight=1)
+        self.geometry("800x600")
+        self.title("Pokedex")
+        self.my_frame = ctk.CTkFrame(master=self)
+        self.my_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        self.my_frame = MyFrame(master=self)
-        self.my_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
-
+        fig = Figure(figsize=(5, 5))
+        canvas = FigureCanvasTkAgg(fig, master=self)
+        canvas.get_tk_widget()
+        canvas.draw()
 
 app = App()
 app.mainloop()
+
+
