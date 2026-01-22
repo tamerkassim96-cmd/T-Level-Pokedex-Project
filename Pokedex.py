@@ -30,5 +30,15 @@ class App(ctk.CTk):
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
+        title_label = ctk.CTkLabel(master=self, text = "Pokedex", font=("Arial", 20, "bold"))
+        title_label.pack(pady=10, padx=10)
+
+        info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
+        info_label.pack()
+
+        scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
+        scrollable_frame.pack()
+
+
 app = App()
 app.mainloop()
