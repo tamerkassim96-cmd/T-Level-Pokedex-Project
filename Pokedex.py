@@ -14,7 +14,7 @@ print("Amount of pokemon is:", len(df))
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry("800x600")
+        self.geometry("1080x900")
         self.title("Pokedex")
         self.my_frame = ctk.CTkFrame(master=self)
         self.my_frame.pack(fill="both", expand=True, padx=20, pady=20)
@@ -28,23 +28,37 @@ class App(ctk.CTk):
 
         canvas = FigureCanvasTkAgg(fig, master=self.my_frame)
         canvas.draw()
-            canvas.get_tk_widget().pack(fill="both", expand=True)
-    
-            title_label = ctk.CTkLabel(master=self, text = "Pokedex", font=("Arial", 20, "bold"))
-            title_label.pack(pady=10, padx=10)
-    
-            info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
-            info_label.pack()
-    
+        canvas.get_tk_widget().pack(fill="both", expand=True)
+
+        title_label = ctk.CTkLabel(master=self, text = "Pokedex", font=("Arial", 20, "bold"))
+        title_label.pack(pady=10, padx=10)
+
+        info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
+        info_label.pack()
+
+        def scrollable_frame():
             scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
             scrollable_frame.pack()
-    
-            entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
-            entry.pack()
-    
+
+        scrollable_frame()
+
+        def self_entry():
+            self.entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
+            self.entry.pack(padx=10, pady=10)
+
+        self_entry()
+
+        def button():
             button = ctk.CTkButton(master=self, text="Search")
-            button.pack(pady=10, padx=10)
-    
-    
-    app = App()
-    app.mainloop()
+            button.pack()
+        button()
+
+        def check_box():
+            check_box = ctk.CTkCheckBox(master=self, text="Type: Electric")
+            check_box.pack(pady=10, padx=10)
+
+        check_box()
+
+
+app = App()
+app.mainloop()
