@@ -39,6 +39,11 @@ class App(ctk.CTk):
         scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
         scrollable_frame.pack()
 
+        entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
+        entry.pack()
+
+        button = ctk.CTkButton(master=self, text="Search")
+        button.pack(pady=10, padx=10)
 
 app = App()
 app.mainloop()
