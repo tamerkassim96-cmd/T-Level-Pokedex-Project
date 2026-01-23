@@ -28,22 +28,23 @@ class App(ctk.CTk):
 
         canvas = FigureCanvasTkAgg(fig, master=self.my_frame)
         canvas.draw()
-        canvas.get_tk_widget().pack(fill="both", expand=True)
-
-        title_label = ctk.CTkLabel(master=self, text = "Pokedex", font=("Arial", 20, "bold"))
-        title_label.pack(pady=10, padx=10)
-
-        info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
-        info_label.pack()
-
-        scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
-        scrollable_frame.pack()
-
-        entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
-        entry.pack()
-
-        button = ctk.CTkButton(master=self, text="Search")
-        button.pack(pady=10, padx=10)
-
-app = App()
-app.mainloop()
+            canvas.get_tk_widget().pack(fill="both", expand=True)
+    
+            title_label = ctk.CTkLabel(master=self, text = "Pokedex", font=("Arial", 20, "bold"))
+            title_label.pack(pady=10, padx=10)
+    
+            info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
+            info_label.pack()
+    
+            scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
+            scrollable_frame.pack()
+    
+            entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
+            entry.pack()
+    
+            button = ctk.CTkButton(master=self, text="Search")
+            button.pack(pady=10, padx=10)
+    
+    
+    app = App()
+    app.mainloop()
