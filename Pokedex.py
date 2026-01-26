@@ -14,7 +14,7 @@ print("Amount of pokemon is:", len(df))
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry("1080x900")
+        self.geometry("1000x910")
         self.title("Pokedex")
         self.my_frame = ctk.CTkFrame(master=self)
         self.my_frame.pack(fill="both", expand=True, padx=20, pady=20)
@@ -36,28 +36,37 @@ class App(ctk.CTk):
         info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
         info_label.pack()
 
-        def scrollable_frame():
-            scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
-            scrollable_frame.pack()
+        scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
+        scrollable_frame.pack()
 
-        scrollable_frame()
+        self.pokemon_info = ctk.CTkLabel(master=scrollable_frame, text="Search for a Pokemon...")
+        self.pokemon_info.pack()
 
-        def self_entry():
-            self.entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
-            self.entry.pack(padx=10, pady=10)
+        self.entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
+        self.entry.pack(padx=10, pady=10)
 
-        self_entry()
+        button = ctk.CTkButton(master=self, text="Search", command=self.search_pokemon)
+        button.pack()
 
-        def button():
-            button = ctk.CTkButton(master=self, text="Search")
-            button.pack()
-        button()
+        check_box = ctk.CTkCheckBox(master=self, text="Type")
+        check_box.pack(pady=10, padx=10)
 
-        def check_box():
-            check_box = ctk.CTkCheckBox(master=self, text="Type: Electric")
-            check_box.pack(pady=10, padx=10)
+    def search_pokemon(self):
+        search_text = self.entry.get()
+        print(f"Searching for {search_text}...")
 
-        check_box()
+        get_text = df.loc[df["Name"] == search_text]
+        print(get_text)
+
+        if get_text.empty:
+            self.pokemon_info.configure("Pokemon not found.")
+
+        else:
+            pokemon = get_text.iloc[0]
+            info_text = f"Name: {pokemon["Name"]}\nType: {pokemon['Type 1']}\nHP: {pokemon['HP']}\nGeneration: {pokemon['Generation']}\nSpeed: {pokemon['Speed']}\nSp. Atk: {pokemon['Sp. Atk']}"
+            self.pokemon_info.configure(text=info_text)
+
+
 
 
 app = App()
