@@ -39,6 +39,9 @@ class App(ctk.CTk):
         scrollable_frame = ctk.CTkScrollableFrame(master=self, width=200, height=200)
         scrollable_frame.pack()
 
+        self.pokemon_stats_frame = ctk.CTkLabel(master=self, text="Pokemon Stats")
+        self.pokemon_stats_frame.pack(pady=10, padx=10)
+
         self.pokemon_info = ctk.CTkLabel(master=scrollable_frame, text="Search for a Pokemon...")
         self.pokemon_info.pack()
 
@@ -52,22 +55,39 @@ class App(ctk.CTk):
         check_box.pack(pady=10, padx=10)
 
     def search_pokemon(self):
-        search_text = self.entry.get()
+        search_text = self.entry.get().lower()
         print(f"Searching for {search_text}...")
 
-        get_text = df.loc[df["Name"] == search_text]
+        get_text = df.loc[df["Name"].str.lower() == search_text]
         print(get_text)
 
         if get_text.empty:
-            self.pokemon_info.configure("Pokemon not found.")
+            self.pokemon_info.configure(text="Pokemon not found.")
 
         else:
             pokemon = get_text.iloc[0]
             info_text = f"Name: {pokemon["Name"]}\nType: {pokemon['Type 1']}\nHP: {pokemon['HP']}\nGeneration: {pokemon['Generation']}\nSpeed: {pokemon['Speed']}\nSp. Atk: {pokemon['Sp. Atk']}"
             self.pokemon_info.configure(text=info_text)
 
+            pokemon_stats = {
+            "Attack": pokemon['Attack'],
+            "Defense": pokemon['Defense'],
+            "HP": pokemon['HP'],
+            "Sp. Atk": pokemon['Sp. Atk'],
+            "Sp. Defense": pokemon['Sp. Def'],
+            "Speed": pokemon['Speed'],
+            }
 
+            fig = Figure(figsize=(5, 5))
+            ax = fig.add_subplot(111)
 
+            ax.bar(pokemon_stats.keys(), pokemon_stats.values())
+            ax.set_title(f"{pokemon['Name']} Stats")
+            ax.set_xlabel("Stats value")
+
+            canvas = FigureCanvasTkAgg(fig, master=self.my_frame)
+            canvas.draw()
+            canvas.get_tk_widget().pack(fill="both", expand=True)
 
 app = App()
 app.mainloop()
