@@ -16,10 +16,11 @@ class App(ctk.CTk):
         super().__init__()
         self.geometry("1000x910")
         self.title("Pokedex")
-        self.my_frame = ctk.CTkFrame(master=self)
-        self.my_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        self.my_frame = ctk.CTkFrame(master=self, height=200, width=800)
+        self.my_frame.pack(padx=10)
+        self.my_frame.pack_propagate(False)
 
-        fig = Figure(figsize=(5, 5))
+        fig = Figure(figsize=(8, 3))
         ax = fig.add_subplot(111)
         df["Type 1"].value_counts().plot(kind="bar", ax=ax)
         ax.set_title("Pokemon Type")
@@ -28,10 +29,10 @@ class App(ctk.CTk):
 
         canvas = FigureCanvasTkAgg(fig, master=self.my_frame)
         canvas.draw()
-        canvas.get_tk_widget().pack(fill="both", expand=True)
+        canvas.get_tk_widget().pack()
 
         title_label = ctk.CTkLabel(master=self, text = "Pokedex", font=("Arial", 20, "bold"))
-        title_label.pack(pady=10, padx=10)
+        title_label.pack(pady=10)
 
         info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
         info_label.pack()
@@ -42,11 +43,11 @@ class App(ctk.CTk):
         self.pokemon_stats_frame = ctk.CTkLabel(master=self, text="Pokemon Stats")
         self.pokemon_stats_frame.pack(pady=10, padx=10)
 
-        self.pokemon_info = ctk.CTkLabel(master=scrollable_frame, text="Search for a Pokemon...")
-        self.pokemon_info.pack()
+        self.pokemon_info = ctk.CTkLabel(master=self, text="Search for a Pokemon...")
+        self.pokemon_info.pack(pady=10)
 
         self.entry = ctk.CTkEntry(master=self, placeholder_text="Search Pokemon")
-        self.entry.pack(padx=10, pady=10)
+        self.entry.pack(padx=10, pady=5)
 
         button = ctk.CTkButton(master=self, text="Search", command=self.search_pokemon)
         button.pack()
@@ -54,7 +55,14 @@ class App(ctk.CTk):
         check_box = ctk.CTkCheckBox(master=self, text="Type")
         check_box.pack(pady=10, padx=10)
 
+        self.stats_frame = ctk.CTkFrame(master=self)
+        self.stats_frame.pack(fill="both", expand=True, pady=20, padx=10)
+
     def search_pokemon(self):
+
+        for widget in self.stats_frame.winfo_children():
+            widget.destroy()
+
         search_text = self.entry.get().lower()
         print(f"Searching for {search_text}...")
 
@@ -85,9 +93,18 @@ class App(ctk.CTk):
             ax.set_title(f"{pokemon['Name']} Stats")
             ax.set_xlabel("Stats value")
 
-            canvas = FigureCanvasTkAgg(fig, master=self.my_frame)
+            canvas = FigureCanvasTkAgg(fig, master=self.stats_frame)
             canvas.draw()
             canvas.get_tk_widget().pack(fill="both", expand=True)
+
+        def pokemon_option_menu(choice):
+            print("Dropdown clicked")
+
+        pokemon_menu_var = ctk.StringVar(value="Pokemon 1")
+        pokemon_menu = ctk.CTkOptionMenu(app, values=["Pokemon 1","Pokemon 2"], command=pokemon_option_menu, variable=pokemon_menu_var)
+
+        pokemon_menu.set("Pokemon 1")
+        pokemon_menu.pack(pady=10)
 
 app = App()
 app.mainloop()
