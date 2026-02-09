@@ -18,35 +18,44 @@ class App(ctk.CTk):
         self.geometry("1200x900")
         self.title("Pokedex")
 
-        title_label = ctk.CTkLabel(master=self, text="Pokedex", font=("Arial", 24, "bold"))
-        title_label.pack(pady=15)
+        pokedex_infolabel = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
+        pokedex_infolabel.pack()
 
-        info_label = ctk.CTkLabel(master=self, text=f"Total Pokemon: {len(df)}")
-        info_label.pack()
+        pokedex_titlelabel = ctk.CTkLabel(master=self, text="Pokedex", font=("Arial", 24, "bold"))
+        pokedex_titlelabel.pack(pady=15)
 
-        search_frame = ctk.CTkFrame(master=self)
-        search_frame.pack(pady=10)
+        pokedex_searchframe = ctk.CTkFrame(master=self)
+        pokedex_searchframe.pack(pady=10)
 
-        self.entry = ctk.CTkEntry(master=search_frame, placeholder_text="Search Pokemon", width=300)
+        self.entry = ctk.CTkEntry(master=pokedex_searchframe, placeholder_text="Search Pokemon", width=300)
         self.entry.pack(side="left", padx=5)
 
-        button = ctk.CTkButton(master=search_frame, text="Search", command=self.search_pokemon)
+        button = ctk.CTkButton(master=pokedex_searchframe, text="Search", command=self.search_pokemon)
         button.pack(side="left", padx=5)
 
         self.pokemon_info = ctk.CTkLabel(master=self, text="Search for a Pokemon...", font=("Arial", 12))
         self.pokemon_info.pack(pady=10)
 
-        self.stats_frame = ctk.CTkFrame(master=self, height=350)
-        self.stats_frame.pack(fill="x", padx=20, pady=10)
+        self.pokemon_generation_menu = ctk.CTkOptionMenu(master=self, values=["All", "1", "2", "3", "4", "5", "6"],
+        command=self.pokemon_generation_filter
+        )
+        self.pokemon_generation_menu.set("All")
+        self.pokemon_generation_menu.pack(pady=5)
+
+        pokedex_filterlabel = ctk.CTkLabel(master=self, text=f"Filter Pokemon by Generation:", font= ("Arial", 12, "bold"))
+        pokedex_filterlabel.pack(pady=5)
+
+        self.stats_frame = ctk.CTkFrame(master=self, width=300, height=300)
+        self.stats_frame.pack(fill='x', padx=20, pady=10)
 
         pokemon_type_chart_label = ctk.CTkLabel(master=self, text="Overall Type Distribution", font=("Arial", 14, "bold"))
         pokemon_type_chart_label.pack(pady=(20, 5))
 
-        self.my_frame = ctk.CTkFrame(master=self, height=250)
-        self.my_frame.pack(fill="x", padx=20, pady=10)
+        self.my_frame = ctk.CTkFrame(master=self, height=350, width=700)
+        self.my_frame.pack(fill='x',padx=20, pady=10)
         self.my_frame.pack_propagate(False)
 
-        fig = Figure(figsize=(10, 3))
+        fig = Figure(figsize=(7, 4))
         ax = fig.add_subplot(111)
         df["Type 1"].value_counts().plot(kind="bar", ax=ax, color='steelblue')
         ax.set_title("Pokemon Type Distribution")
@@ -59,6 +68,7 @@ class App(ctk.CTk):
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
     def search_pokemon(self):
+        # basically removes the old chart from the previous search
         for widget in self.stats_frame.winfo_children():
             widget.destroy()
 
@@ -75,12 +85,12 @@ class App(ctk.CTk):
         else:
             pokemon = get_text.iloc[0]
 
-            info_text = (f"Name: {pokemon['Name']} |"
-                         f"Type: {pokemon['Type 1']} |"
-                         f"HP: {pokemon['HP']} |"
-                         f"Generation: {pokemon['Generation']} |"
-                         f"Speed: {pokemon['Speed']}")
-            self.pokemon_info.configure(text=info_text)
+            pokemon_info = (f"Name: {pokemon['Name']} |"
+                        f"Type: {pokemon['Type 1']} |"
+                        f"HP: {pokemon['HP']} |"
+                        f"Generation: {pokemon['Generation']} |"
+                        f"Speed: {pokemon['Speed']}")
+            self.pokemon_info.configure(text=pokemon_info)
 
             pokemon_stats = {
                 "HP": pokemon['HP'],
@@ -93,8 +103,8 @@ class App(ctk.CTk):
 
             fig = Figure(figsize=(10, 4))
             ax = fig.add_subplot(111)
-            ax.bar(pokemon_stats.keys(), pokemon_stats.values(), color='coral')
-            ax.set_title(f"{pokemon['Name']} Stats", fontsize=14, fontweight='bold')
+            ax.bar(pokemon_stats.keys(), pokemon_stats.values(), color='orange')
+            ax.set_title(f"{pokemon['Name']} Stats", fontsize=14, weight='bold')
             ax.set_ylabel("Stat Value")
             ax.set_ylim(0, max(pokemon_stats.values()) + 20)
 
@@ -103,5 +113,30 @@ class App(ctk.CTk):
             canvas.get_tk_widget().pack(fill="both", expand=True)
 
 
+    def pokemon_generation_filter(self, generation_choice):
+
+        for widget in self.stats_frame.winfo_children():
+            widget.destroy()
+
+        if generation_choice == "All":
+            filtered_pokemon_data = df
+        else:
+            filtered_pokemon_data = df[df["Generation"] == int(generation_choice)]
+
+        self.pokemon_info.configure(text=f"Pokemon Generation {generation_choice}: {len(filtered_pokemon_data)} Pokemon found")
+
+        fig = Figure(figsize=(10, 4))
+        ax = fig.add_subplot(111)
+        filtered_pokemon_data["Type 1"].value_counts().plot(kind="bar", ax=ax, color="green")
+        ax.set_title(f"Generation {generation_choice} Type Distribution")
+        ax.set_ylabel("Number of Pokemon")
+
+        canvas = FigureCanvasTkAgg(fig, master=self.stats_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True)
+
 app = App()
 app.mainloop()
+
+
+
