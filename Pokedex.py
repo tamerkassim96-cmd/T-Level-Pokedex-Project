@@ -36,6 +36,9 @@ class App(ctk.CTk):
         self.pokemon_info = ctk.CTkLabel(master=self, text="Search for a Pokemon...", font=("Arial", 12))
         self.pokemon_info.pack(pady=10)
 
+        pokedex_generation_filter_label = ctk.CTkLabel(master=self, text=f"Filter Pokemon by Generation:", font= ("Arial", 12, "bold"))
+        pokedex_generation_filter_label.pack(pady=5)
+
         self.pokemon_generation_menu = ctk.CTkOptionMenu(master=self, values=["All", "1", "2", "3", "4", "5", "6"],
         command=self.pokemon_generation_filter
         )
@@ -45,13 +48,15 @@ class App(ctk.CTk):
         pokemon_typefilter = ctk.CTkLabel(master=self, text="Type Filter", font=("Arial", 12, "bold"))
         pokemon_typefilter.pack(pady=5)
 
+
         self.type_menu = ctk.CTkOptionMenu(master=self, values=["All", "Fire", "Water", "Grass", "Electric", "Ice", "Psychic",
         "Dark", "Dragon", "Fairy","Fighting", "Normal", "Flying", "Poison", "Rock", "Ground", "Bug", "Ghost", "Steel",], command=self.pokemon_typefilter)
         self.type_menu.set("All")
         self.type_menu.pack(pady=5)
 
-        pokedex_filterlabel = ctk.CTkLabel(master=self, text=f"Filter Pokemon by Generation:", font= ("Arial", 12, "bold"))
-        pokedex_filterlabel.pack(pady=5)
+        random_pokemon = ctk.CTkButton(master=self, text="Random Pokemon", command=self.random_pokemon)
+        random_pokemon.pack(pady=5)
+
 
         self.stats_frame = ctk.CTkFrame(master=self, width=300, height=300)
         self.stats_frame.pack(fill='x', padx=20, pady=10)
@@ -166,6 +171,38 @@ class App(ctk.CTk):
             canvas = FigureCanvasTkAgg(fig, master=self.stats_frame)
             canvas.draw()
             canvas.get_tk_widget().pack(fill="both", expand=True)
+
+
+    def random_pokemon(self):
+
+            for widget in self.stats_frame.winfo_children():
+                widget.destroy()
+
+            random_pokemon = df.sample(1).iloc[0]
+
+            self.pokemon_info.configure(text=f"Random: {random_pokemon["Name"]} | {random_pokemon["Type 1"]}) | {random_pokemon["Generation"]}")
+
+            stats = {
+                "HP": random_pokemon['HP'],
+                "Attack": random_pokemon['Attack'],
+                "Defense": random_pokemon['Defense'],
+                "Sp. Atk": random_pokemon['Sp. Atk'],
+                "Sp. Def": random_pokemon['Sp. Def'],
+                "Speed": random_pokemon['Speed'],
+            }
+
+            fig = Figure(figsize=(10, 4))
+            ax = fig.add_subplot(111)
+            ax.bar(stats.keys(), stats.values(), color='red')
+            ax.set_title(f"{random_pokemon['Name']} Stats")
+            ax.set_ylabel("Stat Value")
+
+            canvas = FigureCanvasTkAgg(fig, master=self.stats_frame)
+            canvas.draw()
+            canvas.get_tk_widget().pack(fill="both", expand=True)
+
+
+
 
 app = App()
 app.mainloop()
