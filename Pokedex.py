@@ -42,6 +42,14 @@ class App(ctk.CTk):
         self.pokemon_generation_menu.set("All")
         self.pokemon_generation_menu.pack(pady=5)
 
+        pokemon_typefilter = ctk.CTkLabel(master=self, text="Type Filter", font=("Arial", 12, "bold"))
+        pokemon_typefilter.pack(pady=5)
+
+        self.type_menu = ctk.CTkOptionMenu(master=self, values=["All", "Fire", "Water", "Grass", "Electric", "Ice", "Psychic",
+        "Dark", "Dragon", "Fairy","Fighting", "Normal", "Flying", "Poison", "Rock", "Ground", "Bug", "Ghost", "Steel",], command=self.pokemon_typefilter)
+        self.type_menu.set("All")
+        self.type_menu.pack(pady=5)
+
         pokedex_filterlabel = ctk.CTkLabel(master=self, text=f"Filter Pokemon by Generation:", font= ("Arial", 12, "bold"))
         pokedex_filterlabel.pack(pady=5)
 
@@ -80,7 +88,7 @@ class App(ctk.CTk):
 
         get_text = df.loc[df["Name"].str.lower() == search_text]
 
-        if get_text.empty:
+        if get_text.empty: #If the search bar is empty and the user clicks search then it will print out "Pokemon not found"
             self.pokemon_info.configure(text="Pokemon not found.")
         else:
             pokemon = get_text.iloc[0]
@@ -135,8 +143,29 @@ class App(ctk.CTk):
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
+
+    def pokemon_typefilter(self, type_choice):
+            for widget in self.stats_frame.winfo_children():
+                widget.destroy()
+
+            if type_choice == "All":
+                filtered_pokemon_data = df
+            else:
+                filtered_pokemon_data = df[df["Type 1"] == (type_choice)]
+
+
+            self.pokemon_info.configure(text=f"type: {type_choice} - {len(filtered_pokemon_data)} Pokemon found")
+
+
+            fig = Figure(figsize=(8, 4))
+            ax = fig.add_subplot(111)
+            filtered_pokemon_data["Generation"].value_counts().sort_index().plot(kind="bar", ax=ax, color="purple")
+            ax.set_title(f"{type_choice} Type - Generation Distribution")
+            ax.set_ylabel("Number of Pokemon")
+
+            canvas = FigureCanvasTkAgg(fig, master=self.stats_frame)
+            canvas.draw()
+            canvas.get_tk_widget().pack(fill="both", expand=True)
+
 app = App()
 app.mainloop()
-
-
-
