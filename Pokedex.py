@@ -44,9 +44,11 @@ class App(ctk.CTk):
         pokedex_searchframe = ctk.CTkFrame(master=self.left_side_frame)
         pokedex_searchframe.pack(pady=5, padx=15, fill="x")
 
+        # This is the actual search bar
         self.entry = ctk.CTkEntry(master=pokedex_searchframe,placeholder_text="Enter Pokemon name...",width=250)
         self.entry.pack(side="left", padx=5, expand=True, fill="x")
 
+        # Search button
         button = ctk.CTkButton(master=pokedex_searchframe,text="Search",command=self.search_pokemon,width=80)
         button.pack(side="left", padx=5)
 
@@ -71,6 +73,7 @@ class App(ctk.CTk):
         pokemon_typefilter = ctk.CTkLabel(master=self.left_side_frame,text="Filter by Type",font=("Arial", 13, "bold"))
         pokemon_typefilter.pack(pady=(15, 5))
 
+        #The type filter menu for all pokemon types
         self.pokemon_type_menu = ctk.CTkOptionMenu(master=self.left_side_frame,values=["All", "Fire", "Water", "Grass", "Electric", "Ice", "Psychic",
         "Dark", "Dragon", "Fairy", "Fighting", "Normal", "Flying","Poison", "Rock", "Ground", "Bug", "Ghost", "Steel"],command=self.pokemon_typefilter,width=200)
         self.pokemon_type_menu.set("All")
@@ -119,6 +122,9 @@ class App(ctk.CTk):
         fig = Figure(figsize=(8, 4), facecolor="#2b2b2b")
         ax = fig.add_subplot(111, facecolor="#2b2b2b")
 
+        # I use this same type of code structure at the end of all my functions,
+        # These lines of code actually create the bar charts and graphs and gets the info from the dataframe
+
         df["Type 1"].value_counts().plot(kind="bar", ax=ax, color="steelblue") # puts the info into a bar chart with kind = "bar"
         ax.set_title("Pokemon Type Distribution", color="white", fontsize=12, weight="bold")
         ax.set_xlabel("Type", color="white")
@@ -144,8 +150,8 @@ class App(ctk.CTk):
 
         get_text = df.loc[df["Name"].str.lower() == search_text]
 
-        if get_text.empty:
-            self.pokemon_info.configure(text="Pokemon not found. Try another name.")
+        if get_text.empty:                                                           # If the search bar is empty and the user clicks search then
+            self.pokemon_info.configure(text="Pokemon not found. Try another name.") # the system would print out that no pokemon is found
 
             # This creates a "not found" message in the stats frame
             not_found_message_label = ctk.CTkLabel(master=self.stats_frame,text="Pokemon not found",font=("Arial", 14),text_color="gray50")
@@ -214,8 +220,8 @@ class App(ctk.CTk):
         for widget in self.stats_frame.winfo_children():
             widget.destroy()
 
-        if type_choice == "All":
-            filtered_pokemon_data = df
+        if type_choice == "All":        # This means that if the user selects "All", no filtering happens but if they select something other than "All"
+            filtered_pokemon_data = df  # Then the code checks each row to see which one the user selects, and it returns the data from the row the user chooses
         else:
             filtered_pokemon_data = df[df["Type 1"] == type_choice]
 
