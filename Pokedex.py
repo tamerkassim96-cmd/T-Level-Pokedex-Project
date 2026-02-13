@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 matplotlib.use("TkAgg")
 import customtkinter as ctk
+import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
@@ -26,7 +27,7 @@ class App(ctk.CTk):
         self.layout_frame = ctk.CTkFrame(master=self)
         self.layout_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        # Frame for the left side used for generation filters, type filters etc
+        # Frame for the left side used for generation filters, type filter etc
         self.left_side_frame = ctk.CTkFrame(master=self.layout_frame)
         self.left_side_frame.pack(side="left", fill="y", padx=(0, 10), pady=10)
         self.left_side_frame.pack_propagate(False)
@@ -84,6 +85,10 @@ class App(ctk.CTk):
         font=("Arial", 13, "bold"))
         random_pokemon.pack(pady=10)
 
+        radar_button = ctk.CTkButton(master=self.left_side_frame, text="Show Radar Chart", command=self.show_radar_chart, width=200,
+        height=35, font=("Arial", 13, "bold"))
+        radar_button.pack(pady=10)
+
         # Right side frame for main graphs and charts to be displayed on the right side of the GUI
         self.right_side_frame = ctk.CTkFrame(master=self.layout_frame)
         self.right_side_frame.pack(side="right", fill="both", expand=True, padx=(10, 0), pady=10)
@@ -109,11 +114,12 @@ class App(ctk.CTk):
 
         self.create_type_distribution_chart()
 
+    # Creates the initial overall pokemon type distribution chart and visualises how many pokemon belong to each primary type
     def create_type_distribution_chart(self):
         fig = Figure(figsize=(8, 4), facecolor="#2b2b2b")
         ax = fig.add_subplot(111, facecolor="#2b2b2b")
 
-        df["Type 1"].value_counts().plot(kind="bar", ax=ax, color="steelblue")
+        df["Type 1"].value_counts().plot(kind="bar", ax=ax, color="steelblue") # puts the info into a bar chart with kind = "bar"
         ax.set_title("Pokemon Type Distribution", color="white", fontsize=12, weight="bold")
         ax.set_xlabel("Type", color="white")
         ax.set_ylabel("Count", color="white")
@@ -262,6 +268,50 @@ class App(ctk.CTk):
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
+
+    def show_radar_chart(self):
+        for widget in self.stats_frame.winfo_children():
+            widget.destroy()
+
+        search_text = self.entry.get().lower()
+
+        if search_text:
+            result = df.loc[df["Name"].str.lower() == search_text]
+            if not result.empty:
+                poke = result.iloc[0]
+            else:
+                poke = df.sample(1).iloc[0]
+
+        else:
+            poke = df.sample(1).iloc[0]
+
+        # Updates the info
+        self.pokemon_info.configure(text=f"Radar Chart: {poke['Name']}\nType: {poke['Type 1']} | Gen: {poke['Generation']}")
+
+        # Gets stats
+        stats = [poke['HP'], poke['Attack'], poke['Defense'], poke['Sp. Atk'], poke['Sp. Def'], poke['Speed']]
+        labels = ['HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed']
+
+        # This calculates the angles for the circular plot
+        angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+        stats = stats + stats[:1]
+        angles = angles + angles[:1]
+
+        fig = Figure(figsize=(5, 5), facecolor="#2b2b2b") # creates the size of the radar chart and changes face colour to black
+        ax = fig.add_subplot(111, projection='polar',facecolor="#2b2b2b")
+        ax.plot(angles, stats, 'o-', linewidth=2, color="cyan")
+        ax.fill(angles, stats, alpha=0.25, color="cyan")
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(labels, color="white")
+        ax.set_ylim(0, 150)
+        ax.set_title(f"{poke['Name']} Stats Radar", color="white",size=14, weight="bold")
+        ax.tick_params(colors="white")
+        ax.grid(color="white", alpha=0.3)
+        fig.tight_layout()
+
+        canvas = FigureCanvasTkAgg(fig, master=self.stats_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True)
 
 app = App()
 app.mainloop()
