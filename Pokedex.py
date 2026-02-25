@@ -19,95 +19,98 @@ class App(ctk.CTk):
         self.geometry("1400x900")
         self.title("Pokedex")
 
-        # Pokedex title
+        # pokedex title
         pokedex_titlelabel = ctk.CTkLabel(master=self, text="Pokedex", font=("Arial", 24, "bold"))
         pokedex_titlelabel.pack(pady=15)
 
-        # Main layout frame for the GUI
+        # main layout frame for the GUI
         self.layout_frame = ctk.CTkFrame(master=self)
         self.layout_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        # Frame for the left side used for generation filters, type filter etc
+        # frame for the left side used for generation filters, type filter etc
         self.left_side_frame = ctk.CTkFrame(master=self.layout_frame)
         self.left_side_frame.pack(side="left", fill="y", padx=(0, 10), pady=10)
         self.left_side_frame.pack_propagate(False)
         self.left_side_frame.configure(width=400)
 
-        # Displays the amount of total pokemon
+        # displays the amount of total pokemon
         pokedex_infolabel = ctk.CTkLabel(master=self.left_side_frame,text=f"Total Pokemon: {len(df)}",font=("Arial", 14, "bold"))
         pokedex_infolabel.pack(pady=(10, 15))
 
-        # Search section
+        # search section
         search_label = ctk.CTkLabel(master=self.left_side_frame,text="Search Pokemon",font=("Arial", 13, "bold"))
         search_label.pack(pady=(5, 5))
 
         pokedex_searchframe = ctk.CTkFrame(master=self.left_side_frame)
         pokedex_searchframe.pack(pady=5, padx=15, fill="x")
 
-        # This is the actual search bar
+        # this is the actual search bar
         self.entry = ctk.CTkEntry(master=pokedex_searchframe,placeholder_text="Enter Pokemon name...",width=250)
         self.entry.pack(side="left", padx=5, expand=True, fill="x")
 
-        # Search button
+        # search button
         button = ctk.CTkButton(master=pokedex_searchframe,text="Search",command=self.search_pokemon,width=80)
         button.pack(side="left", padx=5)
 
-        # Pokemon info display
+        # pokemon info display
         self.pokemon_info = ctk.CTkLabel(master=self.left_side_frame,text="Search for a Pokemon...",font=("Arial", 11),wraplength=350,justify="left")
         self.pokemon_info.pack(pady=15, padx=10)
 
-        # Separator, creates lines in between the filters to make it look more clean
+        # separator, creates lines in between the filters to make it look more clean
         separator1 = ctk.CTkFrame(master=self.left_side_frame, height=2, fg_color="gray30")
         separator1.pack(fill="x", padx=20, pady=10)
 
-        # Generation filter
+        # generation filter
         pokedex_generation_filter_label = ctk.CTkLabel(master=self.left_side_frame,text="Filter by Generation",font=("Arial", 13, "bold"))
         pokedex_generation_filter_label.pack(pady=(5, 5))
 
+        # pokemon generation menu, where you can view the type distribution of each generation of pokemon
         self.pokemon_generation_menu = ctk.CTkOptionMenu(master=self.left_side_frame,values=["All", "1", "2", "3", "4", "5", "6"],
         command=self.pokemon_generation_filter,width=200)
         self.pokemon_generation_menu.set("All")
         self.pokemon_generation_menu.pack(pady=5)
 
-        # Type filter
+        # filters different pokemon type distribution
         pokemon_typefilter = ctk.CTkLabel(master=self.left_side_frame,text="Filter by Type",font=("Arial", 13, "bold"))
         pokemon_typefilter.pack(pady=(15, 5))
 
-        #The type filter menu for all pokemon types
+        # the type filter menu for all pokemon types
         self.pokemon_type_menu = ctk.CTkOptionMenu(master=self.left_side_frame,values=["All", "Fire", "Water", "Grass", "Electric", "Ice", "Psychic",
         "Dark", "Dragon", "Fairy", "Fighting", "Normal", "Flying","Poison", "Rock", "Ground", "Bug", "Ghost", "Steel"],command=self.pokemon_typefilter,width=200)
         self.pokemon_type_menu.set("All")
         self.pokemon_type_menu.pack(pady=5)
 
-        # 2nd Separator, creates lines in between the filters to make it look more clean
+        # 2nd separator, creates lines in between the filters to make it look more clean
         separator2 = ctk.CTkFrame(master=self.left_side_frame, height=2, fg_color="gray30")
         separator2.pack(fill="x", padx=20, pady=15)
 
-        # Random pokemon button
+        # random pokemon button
         random_pokemon = ctk.CTkButton(master=self.left_side_frame,text="Random Pokemon",command=self.random_pokemon,width=200,height=35,
         font=("Arial", 13, "bold"))
         random_pokemon.pack(pady=10)
 
+        # responsible for showing the visual radar chart
         radar_button = ctk.CTkButton(master=self.left_side_frame, text="Show Radar Chart", command=self.show_radar_chart, width=200,
         height=35, font=("Arial", 13, "bold"))
         radar_button.pack(pady=10)
 
-        # Right side frame for main graphs and charts to be displayed on the right side of the GUI
+        # right side frame for main graphs and charts to be displayed on the right side of the GUI
         self.right_side_frame = ctk.CTkFrame(master=self.layout_frame)
         self.right_side_frame.pack(side="right", fill="both", expand=True, padx=(10, 0), pady=10)
 
-        # Stats frame (top half)
+        # displays "Pokemon Statistics" above the top half frame
         stats_label = ctk.CTkLabel(master=self.right_side_frame,text="Pokemon Statistics",font=("Arial", 16, "bold"))
         stats_label.pack(pady=(10, 5))
 
+        # stats frame (top half)
         self.stats_frame = ctk.CTkFrame(master=self.right_side_frame, height=350)
         self.stats_frame.pack(fill='both', expand=True, padx=15, pady=(5, 15))
 
-        # Initial message before searching pokemon in stats frame
+        # initial message before searching pokemon in stats frame
         initial_stats_label = ctk.CTkLabel(master=self.stats_frame,text="Select a Pokemon to view its stats",font=("Arial", 14),text_color="gray50")
         initial_stats_label.pack(expand=True)
 
-        # Type distribution frame (bottom half)
+        # type distribution frame (bottom half)
         pokemon_type_chart_label = ctk.CTkLabel(master=self.right_side_frame,text="Overall Type Distribution",font=("Arial", 16, "bold"))
         pokemon_type_chart_label.pack(pady=(10, 5))
 
@@ -117,13 +120,13 @@ class App(ctk.CTk):
 
         self.create_type_distribution_chart()
 
-    # Creates the initial overall pokemon type distribution chart and visualises how many pokemon belong to each primary type
+    # creates the initial overall pokemon type distribution chart and visualises how many pokemon belong to each primary type
     def create_type_distribution_chart(self):
         fig = Figure(figsize=(8, 4), facecolor="#2b2b2b")
         ax = fig.add_subplot(111, facecolor="#2b2b2b")
 
         # I use this same type of code structure at the end of all my functions,
-        # These lines of code actually create the bar charts and graphs and gets the info from the dataframe
+        # these lines of code actually create the bar charts and graphs (visual data) and gets the info from the dataframe
 
         df["Type 1"].value_counts().plot(kind="bar", ax=ax, color="steelblue") # puts the info into a bar chart with kind = "bar"
         ax.set_title("Pokemon Type Distribution", color="white", fontsize=12, weight="bold")
@@ -133,11 +136,12 @@ class App(ctk.CTk):
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right")
         fig.tight_layout()
 
+        # I always use this to display the chart and info onto the GUI
         canvas = FigureCanvasTkAgg(fig, master=self.type_chart_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
-    # Allows the user to search for a specific pokemon
+    # allows the user to search for a specific pokemon
     def search_pokemon(self):
         for widget in self.stats_frame.winfo_children():
             widget.destroy()
@@ -150,10 +154,10 @@ class App(ctk.CTk):
 
         get_text = df.loc[df["Name"].str.lower() == search_text]
 
-        if get_text.empty:                                                           # If the search bar is empty and the user clicks search then
+        if get_text.empty:                                                           # if the search bar is empty and the user clicks search then
             self.pokemon_info.configure(text="Pokemon not found. Try another name.") # the system would print out that no pokemon is found
 
-            # This creates a "not found" message in the stats frame
+            # this creates a "not found" message in the stats frame
             not_found_message_label = ctk.CTkLabel(master=self.stats_frame,text="Pokemon not found",font=("Arial", 14),text_color="gray50")
             not_found_message_label.pack(expand=True)
         else:
@@ -187,7 +191,7 @@ class App(ctk.CTk):
             canvas.draw()
             canvas.get_tk_widget().pack(fill="both", expand=True)
 
-    # Filters pokemon by their generation
+    # filters pokemon by their generation
     def pokemon_generation_filter(self, generation_choice):
         for widget in self.stats_frame.winfo_children():
             widget.destroy()
@@ -215,13 +219,13 @@ class App(ctk.CTk):
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
-    # Filters pokemon by their type like electric, fire etc.
+    # filters pokemon by their type like electric, fire etc.
     def pokemon_typefilter(self, type_choice):
         for widget in self.stats_frame.winfo_children():
             widget.destroy()
 
-        if type_choice == "All":        # This means that if the user selects "All", no filtering happens but if they select something other than "All"
-            filtered_pokemon_data = df  # Then the code checks each row to see which one the user selects, and it returns the data from the row the user chooses
+        if type_choice == "All":        # this means that if the user selects "All", no filtering happens but if they select something other than "All"
+            filtered_pokemon_data = df  # then the code checks each row to see which one the user selects, and it returns the data from the row the user chooses
         else:
             filtered_pokemon_data = df[df["Type 1"] == type_choice]
 
@@ -242,12 +246,12 @@ class App(ctk.CTk):
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
-    # Displays a random pokemon when the button is clicked
+    # displays a random pokemon when the button is clicked
     def random_pokemon(self):
         for widget in self.stats_frame.winfo_children():
             widget.destroy()
 
-        random_pokemon = df.sample(1).iloc[0]
+        random_pokemon = df.sample(1).iloc[0] # searches through the dataframe
 
         self.pokemon_info.configure(text=f"Random Pokemon: {random_pokemon['Name']}\n"
         f"Type: {random_pokemon['Type 1']} | Generation: {random_pokemon['Generation']}")
@@ -291,29 +295,29 @@ class App(ctk.CTk):
         else:
             poke = df.sample(1).iloc[0]
 
-        # Updates the info
+        # updates the info
         self.pokemon_info.configure(text=f"Radar Chart: {poke['Name']}\nType: {poke['Type 1']} | Gen: {poke['Generation']}")
 
-        # Gets stats
+        # gets stats
         stats = [poke['HP'], poke['Attack'], poke['Defense'], poke['Sp. Atk'], poke['Sp. Def'], poke['Speed']]
         labels = ['HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed']
 
-        # This calculates the angles for the circular plot
+        # this calculates the angles for the circular plot
         angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
-        stats = stats + stats[:1]
-        angles = angles + angles[:1]
+        stats = stats + stats[:1] # adds the first stat to end to complete the circle
+        angles = angles + angles[:1] # this adds the first angle to end to close the shape
 
         fig = Figure(figsize=(5, 5), facecolor="#2b2b2b") # creates the size of the radar chart and changes face colour to black
         ax = fig.add_subplot(111, projection='polar',facecolor="#2b2b2b")
-        ax.plot(angles, stats, 'o-', linewidth=2, color="cyan")
-        ax.fill(angles, stats, alpha=0.25, color="cyan")
+        ax.plot(angles, stats, 'o-', linewidth=2, color="cyan") # draws the stat lines onto the shape and fills the area
+        ax.fill(angles, stats, alpha=0.25, color="cyan") # this fills the area with a transparent colour
         ax.set_xticks(angles[:-1])
-        ax.set_xticklabels(labels, color="white")
+        ax.set_xticklabels(labels, color="white") # labels each point like attack and hp
         ax.set_ylim(0, 150)
         ax.set_title(f"{poke['Name']} Stats Radar", color="white",size=14, weight="bold")
         ax.tick_params(colors="white")
-        ax.grid(color="white", alpha=0.3)
-        fig.tight_layout()
+        ax.grid(color="white", alpha=0.3) # adds grid lines
+        fig.tight_layout() # adjusts the spacing
 
         canvas = FigureCanvasTkAgg(fig, master=self.stats_frame)
         canvas.draw()
